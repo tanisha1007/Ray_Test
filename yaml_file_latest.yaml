@@ -1,0 +1,27 @@
+# A unique identifier for the head node and workers of this cluster.
+cluster_name: new_ray_head
+
+# The maximum number of workers nodes to launch in addition to the head
+# node. This takes precedence over min_workers. min_workers defaults to 0.
+max_workers: 2
+
+# Cloud-provider specific configuration.
+provider:
+  type: aws
+  region: us-east-1
+  availability_zone: us-east-1b
+
+# How Ray will authenticate with newly launched nodes.
+auth:
+  ssh_user: ubuntu
+  # ssh_private_key: ~/home/ubuntu/.ssh/Divum_RSA.pem
+
+# Commands to run to set up the head node.
+setup_commands:
+  - sudo apt-get update && sudo apt-get -y install openssh-server
+  - sudo systemctl start ssh
+  - sudo apt-get install -y python3-pip 
+  - sudo systemctl enable ssh
+  - pip install ray[default] 
+  - ulimit -n 65536; ray start --head --port=6379 --num-cpus=1 --num-gpus=0 --object-manager-port=8076
+  - touch /tmp/some_file.txt
